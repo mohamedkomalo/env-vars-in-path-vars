@@ -1,0 +1,79 @@
+<idea-plugin version="2">
+    <id>com.github.mohamedkomalo.envVarsInPathVars</id>
+    <name>Environment Variables in Path Variables</name>
+    <version>1.0</version>
+    <vendor email="mohamedkomalo@gmail.com" url="http://www.github.com/mohamedkomalo">Mohamed Kamal Kamaly</vendor>
+
+    <description><![CDATA[
+    <p>
+        An IntelliJ IDEA plugin to automatically add environment variables to
+        <a href="https://www.jetbrains.com/idea/help/path-variables.html">Path Variables</a>. <br><br>
+
+        Environment variable are added to Path Variables with "env." prefix to avoid collisions.<br><br>
+
+        To reload the environment variables loaded:<br>
+        <b>Tools</b> -> <b>Reload Environment Variables in Path Variables</b>.<br><br>
+
+        <b>Not all environment variables are added:</b> <br>
+        Intellij IDEA automatically checks for any thing it will save from the project data that has a matched
+        value in Path Variables, and if it found one, it will replace the value with the Path Variable name
+        automatically. Since some environment variables may be a number or a name as a result Intellij may
+        wrongly use this Path Variable instead of the actual number.<br><br>
+
+        For example, when adding all the environment variables and inspecting a project's iml file, this was found<br>
+
+        &lt;module type=&quot;PLUGIN_MODULE&quot; version=&quot;$env.NUMBER_OF_PROCESSORS$&quot;&gt;<br>
+
+        while it should have been<br>
+
+        &lt;module type=&quot;PLUGIN_MODULE&quot; version=&quot;4&quot;&gt;<br><br>
+
+        Intellij has found that there's a Path Variable $env.NUMBER_OF_PROCESSORS$ that has the value "4", so it
+        automatically replaced the "version" value with the variable's name.<br><br>
+
+        To overcome this issue, the value of the environment variable is checked against a regex that is modifiable at
+        USERHOME/.IdeaIC14/config/options/options.xml at property with name "envVarsInPathVars.regexFilter". There
+        are currently no gui to change this setting.<br><br>
+
+        The default regex filter is ".*_HOME" because it became a convention for the environment variable name of
+        a library or a software installation path.
+    </p>
+    ]]></description>
+
+    <change-notes><![CDATA[
+      Implemented version 1.0.<br>
+    ]]>
+    </change-notes>
+
+    <!-- please see https://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
+    <idea-version since-build="131"/>
+
+    <!-- please see https://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <application-components>
+        <!-- Add your application components here -->
+        <component>
+            <implementation-class>com.github.mohamedkomalo.envVarsInPathVars.EnvironmentVariablesOnStartupRegistrar</implementation-class>
+        </component>
+    </application-components>
+
+    <project-components>
+        <!-- Add your project components here -->
+    </project-components>
+
+    <actions>
+        <action id="envVarInPathVar.ReloadVariables" class="com.github.mohamedkomalo.envVarsInPathVars.ReloadEnvironmentVariablesAction"
+                text="Reload Environment Variables in Path Variables">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+    </actions>
+
+</idea-plugin>
